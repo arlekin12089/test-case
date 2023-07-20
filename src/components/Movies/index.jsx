@@ -1,12 +1,27 @@
 import Movie from "../../components/Movie";
 import PropTypes from "prop-types";
 import "./styles.scss";
+import { Link } from "react-router-dom";
+import ghost from "../../assets/ghost.svg";
 
 const Movies = ({ movies, viewTrailer, closeCard }) => {
   return (
     <div data-testid="movies">
       {movies.length === 0 ? (
-        <p>Sorry, there are no movies found for the search query.</p>
+        <div className="no-trailer-message">
+          <h2>
+            4
+            <span>
+              <img src={ghost} />
+            </span>
+            4
+          </h2>
+          <h3>Ooops!</h3>
+          <p>No trailer available for this movie.</p>
+          <Link to="/" data-testid="home" className="btn btn-light">
+            Back to home
+          </Link>
+        </div>
       ) : (
         movies.movies.results?.map((movie) => (
           <Movie movie={movie} key={movie.id} viewTrailer={viewTrailer} />

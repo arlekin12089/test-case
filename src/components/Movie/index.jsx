@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import starredSlice from "../../data/starredSlice";
 import watchLaterSlice from "../../data/watchLaterSlice";
-import placeholder from "../../assets/not-found-500X750.jpeg";
+import placeholder from "../../assets/no-trailer.svg";
 
 const Movie = ({ movie, viewTrailer }) => {
   const { id, overview, release_date, poster_path, title } = movie;

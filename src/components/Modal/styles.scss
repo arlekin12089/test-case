@@ -1,0 +1,114 @@
+.modal {
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 1;
+    display: flex;
+    transition: opacity 0.2s ease-out;
+
+    .modal-content {
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.6);
+    transition: all 0.3s;
+    @media (min-width: 800px){
+        max-width: 800px;
+        max-height: 500px;
+        margin: 20px auto;
+    }
+    }
+
+    .video-player {
+        display: flex;
+        width:100%!important;
+        height: 100%!important;
+    }
+
+    .close-btn {
+        background-color: #000;
+        border: none;
+        position: absolute;
+        right: 0;
+        top: -15px;
+        font-size: 13px;
+        width: 30px;
+        height: 30px;
+        color: white;
+        cursor: pointer;
+        @media (min-width: 800px){
+            right: -13px;
+            top: -19px;
+        }
+
+        &:before{
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 1.5em;
+            background: #fff;
+            display: block;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 4px;
+        }
+
+        &:after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 1.5em;
+            background: #fff;
+            display: block;
+            transform: rotate(45deg);
+            left: 50%;
+            top: 4px;
+        }
+    }
+}
+
+.no-trailer-message {
+    color: #000;
+    h2 {
+        color: #e7ebf2;
+        font-size: 6.5rem;
+        letter-spacing: .10em;
+        margin: .025em  auto 0.2em;
+        text-shadow: .04em .04em 0 rgba(0,0,0,.3);
+        white-space: nowrap;
+        @media (min-width: 800px){
+            font-size: 11.5rem;        
+        }
+
+        & > span {
+            animation: ghost 2s alternate infinite linear;
+            display: inline-block;
+            width: 24%;
+            height: 24%;
+        }
+    }
+}
+
+@keyframes ghost {
+    from {
+      transform: translatey(.15em) scaley(.95);
+    }
+    
+    to {
+      transform: translatey(-.15em);
+    }
+  }

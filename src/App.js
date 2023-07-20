@@ -19,8 +19,10 @@ import Header from "./components/Header/index";
 import Movies from "./components/Movies/index";
 import Starred from "./components/Starred/index";
 import WatchLater from "./components/WatchLater/index";
-import YouTubePlayer from "./components/YoutubePlayer";
+import YouTubePlayer from "./components/Modal";
 import "./app.scss";
+import { Link } from "react-router-dom";
+import ghost from "./assets/ghost.svg";
 
 const App = () => {
   const { movies } = useSelector((state) => state);
@@ -28,11 +30,13 @@ const App = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search");
   const [videoKey, setVideoKey] = useState();
-  const [isOpen, setOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const closeCard = () => {};
+  const closeCard = () => {
+    setIsModalOpen(false);
+  };
 
   // Fetch movies based on search query.
   const getSearchResults = useCallback(
@@ -74,10 +78,9 @@ const App = () => {
   const viewTrailer = useCallback(
     (movie) => {
       getMovie(movie.id);
-      if (!videoKey) setOpen(true);
-      setOpen(true);
+      setIsModalOpen(true);
     },
-    [getMovie, videoKey]
+    [getMovie]
   );
 
   // Search for movies based on a query.
@@ -95,7 +98,24 @@ const App = () => {
         .then((response) => {
           // Check if no movies were found
           if (response.payload.results.length === 0) {
-            setError("No movies found for the search query.");
+            setError(
+              <>
+                <div className="no-trailer-message">
+                  <h2>
+                    4
+                    <span>
+                      <img src={ghost} />
+                    </span>
+                    4
+                  </h2>
+                  <h3>Ooops!</h3>
+                  <p>No trailer available for this movie.</p>
+                  <Link to="/" data-testid="home" className="btn btn-light">
+                    Back to home
+                  </Link>
+                </div>
+              </>
+            );
           } else {
             setError(null);
           }
@@ -128,23 +148,29 @@ const App = () => {
       />
 
       <div className="container">
-        {videoKey ? (
-          <YouTubePlayer videoKey={videoKey} />
-        ) : (
-          <div className="error-container">
-            {error ? (
-              <div className="error-message">
-                <p>{error}</p>
-              </div>
-            ) : (
-              <Movies
-                movies={movies}
-                viewTrailer={viewTrailer}
-                closeCard={closeCard}
+        {isModalOpen && (
+          <div className="modal">
+            <div className="modal-content">
+              <YouTubePlayer
+                videoKey={videoKey}
+                onClose={() => setIsModalOpen(false)}
               />
-            )}
+            </div>
           </div>
         )}
+        <div className="error-container">
+          {error ? (
+            <div className="error-message">
+              <p>{error}</p>
+            </div>
+          ) : (
+            <Movies
+              movies={movies}
+              viewTrailer={viewTrailer}
+              closeCard={closeCard}
+            />
+          )}
+        </div>
 
         <Routes>
           <Route
