@@ -24,7 +24,7 @@ const Movie = ({ movie, viewTrailer }) => {
   };
 
   return (
-    <div className="wrapper col-3 col-sm-4 col-md-3 col-lg-3 col-xl-2">
+    <div className="wrapper">
       <div
         className="card"
         onClick={(e) => e.currentTarget.classList.add("opened")}
@@ -32,6 +32,7 @@ const Movie = ({ movie, viewTrailer }) => {
         <div className="card-body text-center">
           <div className="overlay" />
           <div className="info_panel">
+            <h6 className="title">{movie.title}</h6>
             <div className="overview">{movie.overview}</div>
             <div className="year">{movie.release_date?.substring(0, 4)}</div>
             {!starred.starredMovies
@@ -112,7 +113,6 @@ const Movie = ({ movie, viewTrailer }) => {
             alt="Movie poster"
           />
         </div>
-        <h6 className="title mobile-card">{movie.title}</h6>
         <h6 className="title">{movie.title}</h6>
         <button
           type="button"

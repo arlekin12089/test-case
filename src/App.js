@@ -158,19 +158,6 @@ const App = () => {
             </div>
           </div>
         )}
-        <div className="error-container">
-          {error ? (
-            <div className="error-message">
-              <p>{error}</p>
-            </div>
-          ) : (
-            <Movies
-              movies={movies}
-              viewTrailer={viewTrailer}
-              closeCard={closeCard}
-            />
-          )}
-        </div>
 
         <Routes>
           <Route

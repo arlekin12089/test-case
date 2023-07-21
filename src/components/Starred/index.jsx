@@ -19,8 +19,8 @@ const EmptyStarredMovieList = () => (
 
 const StarredMovieList = ({ starredMovies, viewTrailer, onRemoveAll }) => (
   <div data-testid="starred-movies" className="starred-movies">
-    <h6 className="header">Starred movies</h6>
-    <div className="row">
+    <h2 className="header">Starred movies</h2>
+    <div className="movies">
       {starredMovies.map((movie) => (
         <Movie movie={movie} key={movie.id} viewTrailer={viewTrailer} />
       ))}

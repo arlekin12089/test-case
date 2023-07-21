@@ -6,13 +6,13 @@ import ghost from "../../assets/ghost.svg";
 
 const Movies = ({ movies, viewTrailer, closeCard }) => {
   return (
-    <div data-testid="movies">
+    <div data-testid="movies" className="movies">
       {movies.length === 0 ? (
         <div className="no-trailer-message">
           <h2>
             4
             <span>
-              <img src={ghost} />
+              <img src={ghost} alt={ghost} />
             </span>
             4
           </h2>
