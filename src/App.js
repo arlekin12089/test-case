@@ -167,6 +167,7 @@ const App = () => {
                 movies={movies}
                 viewTrailer={viewTrailer}
                 closeCard={closeCard}
+                error={error}
               />
             }
           />
