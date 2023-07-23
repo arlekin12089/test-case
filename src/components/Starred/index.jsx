@@ -21,8 +21,12 @@ const StarredMovieList = ({ starredMovies, viewTrailer, onRemoveAll }) => (
   <div data-testid="starred-movies" className="starred-movies">
     <h2 className="header">Starred movies</h2>
     <div className="movies">
-      {starredMovies.map((movie) => (
-        <Movie movie={movie} key={movie.id} viewTrailer={viewTrailer} />
+      {starredMovies.map((movie, index) => (
+        <Movie
+          movie={movie}
+          key={`${movie.id}-${index}`}
+          viewTrailer={viewTrailer}
+        />
       ))}
     </div>
     <footer className="text-center">

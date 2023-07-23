@@ -1,15 +1,28 @@
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchMovies, selectAllMovies } from "../../data/moviesSlice";
+import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import { API_KEY, ENDPOINT } from "../../api/index";
 import Movie from "../../components/Movie";
 import PropTypes from "prop-types";
 import "./styles.scss";
 import { Link } from "react-router-dom";
 import ghost from "../../assets/ghost.svg";
+const Movies = ({ viewTrailer, closeCard }) => {
+  const dispatch = useDispatch();
+  const movies = useSelector(selectAllMovies);
+  const fetchStatus = useSelector((state) => state.movies.fetchStatus);
+  const currentPage = useSelector((state) => state.movies.currentPage);
 
-const Movies = ({ movies, viewTrailer, closeCard }) => {
-  const results = movies.movies.results || [];
+  const fetchMoreMovies = () => {
+    const apiUrl = `${ENDPOINT}/discover/movie?api_key=${API_KEY}&sort_by=vote_count.desc`;
+    dispatch(fetchMovies({ apiUrl, page: currentPage }));
+  };
 
+  const lastElementRef = useInfiniteScroll(fetchMoreMovies);
   return (
     <div>
-      {results.length === 0 ? (
+      {movies.length === 0 && fetchStatus !== "loading" ? (
         <div className="no-trailer-message">
           <h2>
             4
@@ -26,24 +39,37 @@ const Movies = ({ movies, viewTrailer, closeCard }) => {
         </div>
       ) : (
         <div data-testid="movies" className="movies">
-          {results.map((movie) => {
-            return (
-              <Movie movie={movie} key={movie.id} viewTrailer={viewTrailer} />
-            );
+          {movies.map((movie, index) => {
+            if (movies.length === index + 1) {
+              return (
+                <div ref={lastElementRef} key={movie.id}>
+                  <Movie
+                    movie={movie}
+                    viewTrailer={viewTrailer}
+                    closeCard={closeCard}
+                  />
+                </div>
+              );
+            } else {
+              return (
+                <Movie
+                  movie={movie}
+                  key={movie.id}
+                  viewTrailer={viewTrailer}
+                  closeCard={closeCard}
+                />
+              );
+            }
           })}
         </div>
       )}
+      {fetchStatus === "loading" && <div>Loading...</div>}
+      {fetchStatus === "error" && <div>Error loading movies.</div>}
     </div>
   );
 };
 
 Movies.propTypes = {
-  movies: PropTypes.shape({
-    fetchStatus: PropTypes.string.isRequired,
-    movies: PropTypes.shape({
-      results: PropTypes.arrayOf(PropTypes.object),
-    }),
-  }),
   viewTrailer: PropTypes.func.isRequired,
   closeCard: PropTypes.func.isRequired,
 };

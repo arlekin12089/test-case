@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Routes,
   Route,
+  useNavigate,
   createSearchParams,
   useSearchParams,
-  useNavigate,
 } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import "reactjs-popup/dist/index.css";
-import { fetchMovies } from "./data/moviesSlice";
+import { fetchMovies, selectAllMovies } from "./data/moviesSlice";
 import {
   ENDPOINT_SEARCH,
   ENDPOINT_DISCOVER,
@@ -21,35 +22,60 @@ import Starred from "./components/Starred/index";
 import WatchLater from "./components/WatchLater/index";
 import YouTubePlayer from "./components/Modal";
 import "./app.scss";
-import { Link } from "react-router-dom";
-import ghost from "./assets/ghost.svg";
+function debounce(func, wait) {
+  let timeout;
+
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
 const App = () => {
-  const { movies } = useSelector((state) => state);
+  const allMovies = useSelector(selectAllMovies);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search");
   const [videoKey, setVideoKey] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
+  const [movies, setMovies] = useState(allMovies);
   const navigate = useNavigate();
+  const location = useLocation(); // Get location object
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setMovies(allMovies);
+    }
+  }, [location, allMovies]); // Re-run this effect when location or allMovies changes
 
   const closeCard = () => {
     setIsModalOpen(false);
   };
-
   // Fetch movies based on search query.
   const getSearchResults = useCallback(
-    (query) => {
+    debounce((query) => {
       if (query !== "") {
         const endpoint = `${ENDPOINT_SEARCH}&query=${query}`;
-        dispatch(fetchMovies(endpoint)).catch((err) => setError(err.message));
+        setMovies([]); // Clear movies before new search
+        dispatch(fetchMovies({ apiUrl: endpoint, page: 1 }))
+          .then((response) => {
+            if (response.payload && response.payload.results.length > 0) {
+              setMovies(response.payload.results); // Set current movies to search results
+            }
+          })
+          .catch((err) => setError(err.message));
         setSearchParams(createSearchParams({ search: query }));
       } else {
-        dispatch(fetchMovies(ENDPOINT_DISCOVER));
+        setMovies([]); // Don't display any movies
         setSearchParams();
       }
-    },
+    }, 500), // Debounce time of 500ms
     [dispatch, setSearchParams]
   );
 
@@ -82,41 +108,29 @@ const App = () => {
     },
     [getMovie]
   );
-
   // Search for movies based on a query.
   const searchMovies = useCallback(
-    (query) => {
+    debounce((query) => {
       navigate("/");
       getSearchResults(query);
-    },
+    }, 300), // Debounce time in ms
     [navigate, getSearchResults]
   );
 
   const getMovies = useCallback(() => {
     if (searchQuery) {
-      dispatch(fetchMovies(`${ENDPOINT_SEARCH}&query=${searchQuery}`))
+      dispatch(
+        fetchMovies({
+          apiUrl: `${ENDPOINT_SEARCH}&query=${searchQuery}`,
+          page: 1,
+        })
+      )
         .then((response) => {
           // Check if no movies were found
-          if (response.payload.results.length === 0) {
-            setError(
-              <>
-                <div className="no-trailer-message">
-                  <h2>
-                    4
-                    <span>
-                      <img src={ghost} />
-                    </span>
-                    4
-                  </h2>
-                  <h3>Ooops!</h3>
-                  <p>No trailer available for this movie.</p>
-                  <Link to="/" data-testid="home" className="btn btn-light">
-                    Back to home
-                  </Link>
-                </div>
-              </>
-            );
+          if (response.payload && response.payload.results.length === 0) {
+            setError("No movies found for the provided search.");
           } else {
+            setMovies(response.payload.results); // Set current movies to search results
             setError(null);
           }
         })
@@ -124,17 +138,17 @@ const App = () => {
           setError(err.message);
         });
     } else {
-      dispatch(fetchMovies(ENDPOINT_DISCOVER)).then((response) => {
+      dispatch(fetchMovies({ apiUrl: ENDPOINT_DISCOVER })).then((response) => {
         // Check if no movies were found
-        if (response.payload.results.length === 0) {
+        if (response.payload && response.payload.movies.length === 0) {
           setError("No movies found.");
         } else {
+          setMovies(response.payload.results); // Set current movies to discovered movies
           setError(null);
         }
       });
     }
   }, [searchQuery, dispatch]);
-
   useEffect(() => {
     getMovies();
   }, [getMovies]);
@@ -146,7 +160,6 @@ const App = () => {
         searchParams={searchParams}
         setSearchParams={setSearchParams}
       />
-
       <div className="container">
         {isModalOpen && (
           <div className="modal">
@@ -158,7 +171,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         <Routes>
           <Route
             path="/"
@@ -187,5 +199,4 @@ const App = () => {
     </div>
   );
 };
-
 export default App;

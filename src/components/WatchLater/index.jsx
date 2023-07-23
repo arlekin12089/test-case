@@ -15,8 +15,12 @@ const WatchLater = ({ viewTrailer }) => {
         <div data-testid="watch-later-movies" className="starred-movies">
           <h2 className="header">Watch Later List</h2>
           <div className="movies">
-            {watchLater.watchLaterMovies.map((movie) => (
-              <Movie movie={movie} key={movie.id} viewTrailer={viewTrailer} />
+            {watchLater.watchLaterMovies.map((movie, index) => (
+              <Movie
+                movie={movie}
+                key={`${movie.id}-${index}`}
+                viewTrailer={viewTrailer}
+              />
             ))}
           </div>
 
