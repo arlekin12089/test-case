@@ -8,9 +8,8 @@ import PropTypes from "prop-types";
 import "./styles.scss";
 import { Link } from "react-router-dom";
 import ghost from "../../assets/ghost.svg";
-const Movies = ({ viewTrailer, closeCard }) => {
+const Movies = ({ movies, viewTrailer, closeCard }) => {
   const dispatch = useDispatch();
-  const movies = useSelector(selectAllMovies);
   const fetchStatus = useSelector((state) => state.movies.fetchStatus);
   const currentPage = useSelector((state) => state.movies.currentPage);
 

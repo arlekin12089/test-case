@@ -65,8 +65,8 @@ const App = () => {
         setMovies([]); // Clear movies before new search
         dispatch(fetchMovies({ apiUrl: endpoint, page: 1 }))
           .then((response) => {
-            if (response.payload && response.payload.results.length > 0) {
-              setMovies(response.payload.results); // Set current movies to search results
+            if (response.payload && response.payload.movies.length > 0) {
+              setMovies(response.payload.movies); // Set current movies to search results
             }
           })
           .catch((err) => setError(err.message));
@@ -127,10 +127,10 @@ const App = () => {
       )
         .then((response) => {
           // Check if no movies were found
-          if (response.payload && response.payload.results.length === 0) {
+          if (response.payload && response.payload.movies.length === 0) {
             setError("No movies found for the provided search.");
           } else {
-            setMovies(response.payload.results); // Set current movies to search results
+            setMovies(response.payload.movies); // Set current movies to search results
             setError(null);
           }
         })
@@ -143,7 +143,7 @@ const App = () => {
         if (response.payload && response.payload.movies.length === 0) {
           setError("No movies found.");
         } else {
-          setMovies(response.payload.results); // Set current movies to discovered movies
+          setMovies(response.payload.movies); // Set current movies to discovered movies
           setError(null);
         }
       });
