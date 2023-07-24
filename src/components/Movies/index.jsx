@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchMovies, selectAllMovies } from "../../data/moviesSlice";
+import { fetchMovies } from "../../data/moviesSlice";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import { API_KEY, ENDPOINT } from "../../api/index";
 import Movie from "../../components/Movie";

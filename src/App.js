@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -22,6 +22,7 @@ import Starred from "./components/Starred/index";
 import WatchLater from "./components/WatchLater/index";
 import YouTubePlayer from "./components/Modal";
 import "./app.scss";
+
 function debounce(func, wait) {
   let timeout;
 
@@ -44,48 +45,43 @@ const App = () => {
   const [videoKey, setVideoKey] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
-  const [movies, setMovies] = useState(allMovies);
+  const [movies, setMovies] = useState([]);
   const navigate = useNavigate();
-  const location = useLocation(); // Get location object
+  const location = useLocation();
+  const isCancelled = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      isCancelled.current = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (location.pathname === "/") {
       setMovies(allMovies);
     }
-  }, [location, allMovies]); // Re-run this effect when location or allMovies changes
+  }, [location, allMovies]);
 
   const closeCard = () => {
     setIsModalOpen(false);
   };
-  // Fetch movies based on search query.
+
   const getSearchResults = useCallback(
     debounce((query) => {
       if (query !== "") {
         const endpoint = `${ENDPOINT_SEARCH}&query=${query}`;
-        setMovies([]); // Clear movies before new search
-        dispatch(fetchMovies({ apiUrl: endpoint, page: 1 }))
-          .then((response) => {
-            if (response.payload && response.payload.movies.length > 0) {
-              setMovies(response.payload.movies); // Set current movies to search results
-            }
-          })
-          .catch((err) => setError(err.message));
+        dispatch(fetchMovies({ apiUrl: endpoint, page: 1 }));
         setSearchParams(createSearchParams({ search: query }));
-      } else {
-        setMovies([]); // Don't display any movies
-        setSearchParams();
       }
-    }, 500), // Debounce time of 500ms
+    }, 500),
     [dispatch, setSearchParams]
   );
 
-  // Fetch movie and video details then set video key.
   const getMovie = useCallback(async (id) => {
     const URL = `${ENDPOINT}/movie/${id}?api_key=${API_KEY}&append_to_response=videos`;
     try {
       const response = await fetch(URL);
       if (!response.ok) throw new Error("Error fetching movie details");
-
       const videoData = await response.json();
 
       if (videoData.videos && videoData.videos.results.length > 0) {
@@ -108,47 +104,22 @@ const App = () => {
     },
     [getMovie]
   );
-  // Search for movies based on a query.
+
   const searchMovies = useCallback(
     debounce((query) => {
       navigate("/");
       getSearchResults(query);
-    }, 300), // Debounce time in ms
+    }, 300),
     [navigate, getSearchResults]
   );
 
   const getMovies = useCallback(() => {
-    if (searchQuery) {
-      dispatch(
-        fetchMovies({
-          apiUrl: `${ENDPOINT_SEARCH}&query=${searchQuery}`,
-          page: 1,
-        })
-      )
-        .then((response) => {
-          // Check if no movies were found
-          if (response.payload && response.payload.movies.length === 0) {
-            setError("No movies found for the provided search.");
-          } else {
-            setMovies(response.payload.movies); // Set current movies to search results
-            setError(null);
-          }
-        })
-        .catch((err) => {
-          setError(err.message);
-        });
-    } else {
-      dispatch(fetchMovies({ apiUrl: ENDPOINT_DISCOVER })).then((response) => {
-        // Check if no movies were found
-        if (response.payload && response.payload.movies.length === 0) {
-          setError("No movies found.");
-        } else {
-          setMovies(response.payload.movies); // Set current movies to discovered movies
-          setError(null);
-        }
-      });
-    }
+    const endpoint = searchQuery
+      ? `${ENDPOINT_SEARCH}&query=${searchQuery}`
+      : ENDPOINT_DISCOVER;
+    dispatch(fetchMovies({ apiUrl: endpoint, page: 1 }));
   }, [searchQuery, dispatch]);
+
   useEffect(() => {
     getMovies();
   }, [getMovies]);
