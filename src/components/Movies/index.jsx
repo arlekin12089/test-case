@@ -19,6 +19,8 @@ const Movies = ({ movies, viewTrailer, closeCard }) => {
   };
 
   const lastElementRef = useInfiniteScroll(fetchMoreMovies);
+  console.log(lastElementRef, "sccroll");
+  console.log(movies, "from app");
   return (
     <div>
       {movies.length === 0 && fetchStatus !== "loading" ? (

@@ -17,7 +17,10 @@ export const fetchMovies = createAsyncThunk(
   }
 );
 
-const moviesAdapter = createEntityAdapter();
+const moviesAdapter = createEntityAdapter({
+  selectId: (movie) => movie.id, // Ensure the correct ID field
+  sortComparer: (a, b) => b.vote_average - a.vote_average, // Sort by vote_average
+});
 
 const moviesSlice = createSlice({
   name: "movies",
@@ -26,9 +29,13 @@ const moviesSlice = createSlice({
     currentPage: 1,
     totalPages: 0,
     error: null,
+    searchQuery: "",
   }),
   reducers: {
     resetMovies: moviesAdapter.getInitialState,
+    setSearchQuery: (state, action) => {
+      state.searchQuery = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder

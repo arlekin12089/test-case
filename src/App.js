@@ -9,7 +9,11 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import "reactjs-popup/dist/index.css";
-import { fetchMovies, selectAllMovies } from "./data/moviesSlice";
+import {
+  fetchMovies,
+  selectAllMovies,
+  fetchSearchResults,
+} from "./data/moviesSlice";
 import {
   ENDPOINT_SEARCH,
   ENDPOINT_DISCOVER,
@@ -39,13 +43,13 @@ function debounce(func, wait) {
 
 const App = () => {
   const allMovies = useSelector(selectAllMovies);
+  console.log(allMovies, "allmovies app");
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search");
   const [videoKey, setVideoKey] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
-  const [movies, setMovies] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const isCancelled = useRef(false);
@@ -55,12 +59,6 @@ const App = () => {
       isCancelled.current = true;
     };
   }, []);
-
-  useEffect(() => {
-    if (location.pathname === "/") {
-      setMovies(allMovies);
-    }
-  }, [location, allMovies]);
 
   const closeCard = () => {
     setIsModalOpen(false);
@@ -147,7 +145,7 @@ const App = () => {
             path="/"
             element={
               <Movies
-                movies={movies}
+                movies={allMovies}
                 viewTrailer={viewTrailer}
                 closeCard={closeCard}
               />
