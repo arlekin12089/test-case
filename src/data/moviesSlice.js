@@ -3,7 +3,6 @@ import {
   createSlice,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
-import { API_KEY, ENDPOINT } from "../api";
 
 export const fetchMovies = createAsyncThunk(
   "movies/fetchMovies",
