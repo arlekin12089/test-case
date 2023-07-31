@@ -9,10 +9,12 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import "reactjs-popup/dist/index.css";
-import {
+import moviesSlice, {
   fetchMovies,
   selectAllMovies,
   fetchSearchResults,
+  resetMovies,
+  setSearchQuery,
 } from "./data/moviesSlice";
 import {
   ENDPOINT_SEARCH,
@@ -43,7 +45,6 @@ function debounce(func, wait) {
 
 const App = () => {
   const allMovies = useSelector(selectAllMovies);
-  console.log(allMovies, "allmovies app");
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search");
@@ -68,6 +69,7 @@ const App = () => {
     debounce((query) => {
       if (query !== "") {
         const endpoint = `${ENDPOINT_SEARCH}&query=${query}`;
+        dispatch(resetMovies());
         dispatch(fetchMovies({ apiUrl: endpoint, page: 1 }));
         setSearchParams(createSearchParams({ search: query }));
       }
@@ -103,13 +105,10 @@ const App = () => {
     [getMovie]
   );
 
-  const searchMovies = useCallback(
-    debounce((query) => {
-      navigate("/");
-      getSearchResults(query);
-    }, 300),
-    [navigate, getSearchResults]
-  );
+  const searchMovies = (query) => {
+    navigate("/");
+    getSearchResults(query);
+  };
 
   const getMovies = useCallback(() => {
     const endpoint = searchQuery

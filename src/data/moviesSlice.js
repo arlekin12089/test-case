@@ -31,7 +31,16 @@ const moviesSlice = createSlice({
     searchQuery: "",
   }),
   reducers: {
-    resetMovies: moviesAdapter.getInitialState,
+    resetMovies: (state) => {
+      return moviesAdapter.getInitialState({
+        entities: [],
+        fetchStatus: "idle",
+        currentPage: 1,
+        totalPages: 0,
+        error: null,
+        searchQuery: "",
+      });
+    },
     setSearchQuery: (state, action) => {
       state.searchQuery = action.payload;
     },
@@ -62,5 +71,6 @@ const {
 } = moviesAdapter.getSelectors((state) => state.movies);
 
 export { selectAllMovies, selectMovieById };
+export const { resetMovies, setSearchQuery } = moviesSlice.actions;
 
 export default moviesSlice;
