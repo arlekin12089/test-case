@@ -1,3 +1,4 @@
+@import "../../../src/styles/colors.scss";
 .starred {
     .starred-movies {
         > h2 {
@@ -15,17 +16,17 @@
             width: auto;
             padding: 0 20px;                   
             font-size: 0.8rem;
-            background: red;
+            background: $red;
             border: none;
         }
 
         .back-button {
-            color: #000;
-            background: #efefef;
+            color: $black;
+            background: $white-back-button;
         }
 
         .back-button:hover {
-            background: #dedede;
+            background: $white-back-button-hover;
         }
     }
 }

@@ -1,5 +1,6 @@
+@import "../../../src/styles/colors.scss";
 .modal {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba($black, 0.4);
     width: 100vw;
     height: 100vh;
     position: fixed;
@@ -12,7 +13,7 @@
     transition: opacity 0.2s ease-out;
 
     .modal-content {
-    background-color: #fff;
+    background-color: $white;
     width: 100%;
     height: 100%;
     max-width: 100%;
@@ -26,7 +27,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 3px 7px rgba($black, 0.6);
     transition: all 0.3s;
     @media (min-width: 800px){
         max-width: 800px;
@@ -42,7 +43,7 @@
     }
 
     .close-btn {
-        background-color: #000;
+        background-color: $black;
         border: none;
         position: absolute;
         right: 0;
@@ -50,7 +51,7 @@
         font-size: 13px;
         width: 30px;
         height: 30px;
-        color: white;
+        color: $white;
         cursor: pointer;
         @media (min-width: 800px){
             right: -13px;
@@ -62,7 +63,7 @@
             position: absolute;
             width: 2px;
             height: 1.5em;
-            background: #fff;
+            background: $white;
             display: block;
             transform: rotate(-45deg);
             left: 50%;
@@ -74,7 +75,7 @@
             position: absolute;
             width: 2px;
             height: 1.5em;
-            background: #fff;
+            background: $white;
             display: block;
             transform: rotate(45deg);
             left: 50%;
@@ -84,13 +85,13 @@
 }
 
 .no-trailer-message {
-    color: #000;
+    color: $black;
     h2 {
-        color: #e7ebf2;
+        color: $white-lighter;
         font-size: 6.5rem;
         letter-spacing: .10em;
         margin: .025em  auto 0.2em;
-        text-shadow: .04em .04em 0 rgba(0,0,0,.3);
+        text-shadow: .04em .04em 0 rgba($black,.3);
         white-space: nowrap;
         @media (min-width: 800px){
             font-size: 11.5rem;        

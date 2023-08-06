@@ -1,6 +1,7 @@
+@import "../../../src/styles/colors.scss";
 .container {
     padding-top: 100px;
-    color: #fff;
+    color: $white;
 
     .movies {
         --auto-grid-min-size: 15rem;
@@ -38,18 +39,18 @@
     }
 
     .info_panel {
-        color: #fff;
+        color: $white;
         background: transparent;
         padding: 20px;
         opacity: 0;
     
         .bi-star:hover {
-            color: #e50914;
+            color: $red;
         }
     
         .bi-star-fill {
             margin: 0 5px;
-            color: #e50914;
+            color: $red;
         }
     
         .overview {
@@ -95,7 +96,7 @@
     }
 
     .overlay {
-        color: #fff;
+        color: $white;
         background-color: #111;
     }
 
@@ -109,7 +110,7 @@
         padding: 0;
 
         &:hover {
-            border: 2px solid #fff;            
+            border: 2px solid $white;            
         }
     }
     
@@ -125,7 +126,7 @@
     .btn-star {
         width: 50px;
         margin: 0 5px;
-        color: #e50914;
+        color: $red;
         cursor: pointer;
         @media (max-width: 520px) {
             font-size: 25px;
@@ -154,29 +155,29 @@
         &.btn-watch-later {
         
             &.blue {
-                color: #fff;
-                background-color: #1CB5E0;
-                border: #1CB5E0;
+                color: $white;
+                background-color: $blue;
+                border: $blue;
             }
 
             &:hover {
-                color: #fff;
-                background: #1CB5E0;
-                border-color: #1CB5E0;
+                color: $white;
+                background: $blue;
+                border-color: $blue;
             }
         }
 
         &.btn-dark:hover {
-            color: #fff;
-            background: #1CB5E0;
-            border-color: #1CB5E0;
+            color: $white;
+            background: $blue;
+            border-color: $blue;
         }
     }
 }
 
 .card {
     position: relative;
-    color: #fff;
+    color: $white;
     text-align: center;
     background: transparent;
     border: none;
@@ -235,7 +236,7 @@
             z-index: 999;
             width: 100%;
             height: auto;
-            border: 3px solid #fff;
+            border: 3px solid $white;
             border-radius: 5px;
             transform: none;
 
@@ -257,7 +258,7 @@
                 height: 60px;
                 font-size: 50px;
                 line-height: 20px;
-                color: #fff;
+                color: $white;
                 background: transparent;
                 border: none;
 
