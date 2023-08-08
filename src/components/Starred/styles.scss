@@ -1,0 +1,33 @@
+@import "../../../src/styles/colors.scss";
+.starred {
+    .starred-movies {
+        > h2 {
+            margin-bottom: 40px;
+        }
+    }
+    footer {
+        margin-top: 50px;
+
+        .total-price {
+            font-size: 1.8rem;
+        }
+
+        .btn {
+            width: auto;
+            padding: 0 20px;                   
+            font-size: 0.8rem;
+            background: $red;
+            border: none;
+        }
+
+        .back-button {
+            color: $black;
+            background: $white-back-button;
+        }
+
+        .back-button:hover {
+            background: $white-back-button-hover;
+        }
+    }
+}
+  

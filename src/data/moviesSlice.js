@@ -1,27 +1,76 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import {
+  createAsyncThunk,
+  createSlice,
+  createEntityAdapter,
+} from "@reduxjs/toolkit";
 
-export const fetchMovies = createAsyncThunk('fetch-movies', async (apiUrl) => {
-    const response = await fetch(apiUrl)
-    return response.json()
-})
+export const fetchMovies = createAsyncThunk(
+  "movies/fetchMovies",
+  async ({ apiUrl, page }, { rejectWithValue }) => {
+    const response = await fetch(`${apiUrl}&page=${page}`);
+    if (!response.ok) {
+      return rejectWithValue(response.statusText);
+    }
+    const data = await response.json();
+    return { movies: data.results, totalPages: data.total_pages };
+  }
+);
+
+const moviesAdapter = createEntityAdapter({
+  selectId: (movie) => movie.id, // Ensure the correct ID field
+  sortComparer: (a, b) => b.vote_average - a.vote_average, // Sort by vote_average
+});
 
 const moviesSlice = createSlice({
-    name: 'movies',
-    initialState: { 
-        movies: [],
-        fetchStatus: '',
+  name: "movies",
+  initialState: moviesAdapter.getInitialState({
+    fetchStatus: "idle",
+    currentPage: 1,
+    totalPages: 0,
+    error: null,
+    searchQuery: "",
+  }),
+  reducers: {
+    resetMovies: (state) => {
+      return moviesAdapter.getInitialState({
+        entities: [],
+        fetchStatus: "idle",
+        currentPage: 1,
+        totalPages: 0,
+        error: null,
+        searchQuery: "",
+      });
     },
-    reducers: {},
-    extraReducers: (builder) => {
-        builder.addCase(fetchMovies.fulfilled, (state, action) => {
-            state.movies = action.payload
-            state.fetchStatus = 'success'
-        }).addCase(fetchMovies.pending, (state) => {
-            state.fetchStatus = 'loading'
-        }).addCase(fetchMovies.rejected, (state) => {
-            state.fetchStatus = 'error'
-        })
-    }
-})
+    setSearchQuery: (state, action) => {
+      state.searchQuery = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchMovies.pending, (state) => {
+        state.fetchStatus = "loading";
+      })
+      .addCase(fetchMovies.fulfilled, (state, action) => {
+        state.fetchStatus = "succeeded";
+        moviesAdapter.upsertMany(state, action.payload.movies);
+        state.currentPage += 1;
+        state.totalPages = action.payload.totalPages;
+      })
+      .addCase(fetchMovies.rejected, (state, action) => {
+        state.fetchStatus = "failed";
+        state.error = action.error.message;
+      });
+  },
+});
 
-export default moviesSlice
+// Create the selectors
+const {
+  selectAll: selectAllMovies,
+  selectById: selectMovieById,
+  // pass in a selector that returns the posts slice of state
+} = moviesAdapter.getSelectors((state) => state.movies);
+
+export { selectAllMovies, selectMovieById };
+export const { resetMovies, setSearchQuery } = moviesSlice.actions;
+
+export default moviesSlice;
